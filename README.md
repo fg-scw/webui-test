@@ -9,10 +9,11 @@
   - 1* Managed Inference Embedding "baaie/bge-multilingual-gemma2:fp32"
   - 1* Managed Inference LLM "meta/llama-3.3-70b-instruct:fp8"
 
+![alt text]([http://url/to](https://github.com/fg-scw/webui-test/images/architecture.png)
+
    # How to use it :
   - Clone the repo
   - Modify the file "terraforms.tfvars" with your credentials 
-  - Connect to the url 
 
    # Modify terraforms.tfvars file
     access_key = "ENTER VOTRE ACCESS KEY"
@@ -29,3 +30,8 @@
   - terraform init
   - terraform plan
   - terraform apply --auto-approve
+
+   # First Login
+  - Create an Admin with fake email/info if you want (It's a local admin)
+
+![alt text]([http://url/to](https://github.com/fg-scw/webui-test/images/login.png)

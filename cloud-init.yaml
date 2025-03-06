@@ -1,0 +1,108 @@
+#cloud-config
+
+apt:
+  sources:
+    docker.list:
+      source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg-agent
+  - software-properties-common
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+
+#create the docker group
+groups:
+  - docker
+
+# Add default auto created user to docker group
+system_info:
+  default_user:
+    groups: [docker]
+
+
+bootcmd:
+  - test -z "$(blkid /dev/sdb)" && mkfs -t ext4 -L /mnt/qdrant_data /dev/sdb
+  - mkdir -p /mnt/qdrant_data
+
+mounts:
+  - [/dev/sdb, /mnt/qdrant_data, ext4, "defaults,nofail", "0", "2"]
+
+write_files:
+  - path: /root/qrant-api-key/qdrantkey.yaml
+    permissions: '0644'
+    owner: root:root
+    content: |
+      service:
+        api_key: "Y3NMMGK3Okzt7rzho88jhmzPZl5MhmAtwFbLG4OJPGRtNV7pH8sOlVNtveGcejEl"
+
+  # Service systemd pour lancer le container Qdrant
+  - path: /etc/systemd/system/qdrant-docker.service
+    owner: root:root
+    content: |
+      [Unit]
+      Description=Qdrant Docker Container
+      Requires=docker.service
+      After=docker.service
+      StartLimitIntervalSec=500
+      StartLimitBurst=5
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      Restart=on-failure
+      RestartSec=30
+      ExecStartPre=-/usr/bin/docker stop qdrant
+      ExecStartPre=-/usr/bin/docker rm qdrant
+      ExecStart=/usr/bin/docker run -d --restart=always --name qdrant \
+          -p 6333:6333 -p 6334:6334 \
+          -v /mnt/qdrant_data:/qdrant/storage \
+          -v /root/qrant-api-key/qdrantkey.yaml:/qdrant/config/production.yaml \
+          qdrant/qdrant:latest
+      ExecStop=/usr/bin/docker stop qdrant
+      ExecStopPost=/usr/bin/docker rm qdrant
+
+      [Install]
+      WantedBy=multi-user.target
+
+  # Service systemd pour lancer le container Tika
+  - path: /etc/systemd/system/tika-docker.service
+    owner: root:root
+    content: |
+      [Unit]
+      Description=Tika Docker Container
+      Requires=docker.service
+      After=docker.service
+      StartLimitIntervalSec=500
+      StartLimitBurst=5
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStartPre=-/usr/bin/docker stop tika
+      ExecStartPre=-/usr/bin/docker rm tika
+      ExecStart=/usr/bin/docker run -d --restart=unless-stopped --name tika -p 9998:9998 apache/tika:latest-full
+      ExecStop=/usr/bin/docker stop tika
+      ExecStopPost=/usr/bin/docker rm tika
+
+      [Install]
+      WantedBy=multi-user.target
+
+
+runcmd:
+    - systemctl daemon-reload
+    - systemctl enable qdrant-docker.service
+    - systemctl start qdrant-docker.service
+    - systemctl enable tika-docker.service
+    - systemctl start tika-docker.service
+
+power_state:
+  mode: reboot
+  message: Restarting after installing docker 
+
+final_message: "The system is finally up, after $UPTIME seconds"

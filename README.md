@@ -34,4 +34,4 @@
    # First Login
   - Create an Admin with fake email/info if you want (It's a local admin)
 
-![First Login](https://github.com/fg-scw/images/login.png?raw=true)
+![First Login](https://github.com/fg-scw/webui-test/blob/main/images/login.png)

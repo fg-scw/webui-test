@@ -17,8 +17,17 @@ resource "scaleway_instance_security_group" "web" {
     }
 
     inbound_rule {
-        action     = "accept"
-        protocol   = "UDP"
-        port_range = "22-23"
+        action = "accept"
+        port   = 443
+    }
+
+    inbound_rule {
+        action = "accept"
+        port   = 6333
+    }
+
+    inbound_rule {
+        action = "accept"
+        port   = 9998
     }
 }

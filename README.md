@@ -9,7 +9,7 @@
   - 1* Managed Inference Embedding "baaie/bge-multilingual-gemma2:fp32"
   - 1* Managed Inference LLM "meta/llama-3.3-70b-instruct:fp8"
 
-![Architecture Schema](https://github.com/fg-scw/webui-test/images/ARTE.drawio.png?raw=true)
+![Architecture Schema](https://github.com/fg-scw/webui-test/blob/main/images/ARTE.drawio.png)
 
    # How to use it :
   - Clone the repo

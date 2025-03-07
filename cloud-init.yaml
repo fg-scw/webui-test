@@ -1,6 +1,4 @@
-#### Scaleway Cloud Init Configuration Instance #####
 #cloud-config
-
 apt:
   sources:
     docker.list:

@@ -1,5 +1,5 @@
-access_key = "ENTER VOTRE ACCESS KEY"
-secret_key = "ENTER VOTRE SECRET KEY"
+access_key = "ENTRER VOTRE ACCESS KEY"
+secret_key = "ENTRER VOTRE SECRET KEY"
 project_id = "ENTRER VOTRE PROJECT ID"
 organization_id = "ENTRER VOTRE ORGANIZATION ID"
 region = "fr-par"
